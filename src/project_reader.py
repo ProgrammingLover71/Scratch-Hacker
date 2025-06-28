@@ -15,6 +15,20 @@ class Variable:
 
     def __repr__(self):
         return f"Variable(id={self.id}, name={self.name}, value={self.value}, public={self.public})"
+    
+
+# Block is a class that represents a block in a Scratch project.
+# It has an ID, an opcode (the type of block), inputs (a dictionary of input values for the block),
+# and fields (a dictionary of field values for the block).
+class Block:
+    def __init__(self, id: str, opcode: str, inputs: Dict[str, Any], fields: Dict[str, Any]):
+        self.id = id
+        self.opcode = opcode
+        self.inputs = inputs
+        self.fields = fields
+
+    def __repr__(self):
+        return f"Block(id={self.id}, opcode={self.opcode}, inputs={self.inputs}, fields={self.fields})"
 
 
 # ProjectReader is a class that reads a Scratch project file (.sb3) and extracts variables from it.
@@ -26,6 +40,7 @@ class ProjectReader:
         self.project_asset_files = []
         self.read_project()
 
+    # Read the project and store its data in the the project_json field.
     def read_project(self):
         # Read the project zip file
         with ZipFile(self.project_path, 'r') as zip_file:
@@ -37,10 +52,12 @@ class ProjectReader:
                 file.filename for file in zip_file.infolist()
                 if file.filename != 'project.json'
             ]
-    
+
+    # Get the list of variables from the project.
+    # It returns a list of Variable objects, each representing a variable in the project.
     def get_variables(self) -> List[Variable]:
         if not self.project_json:
-            raise ValueError("Project JSON not loaded.")
+            self.read_project()
         
         project_data = loads(self.project_json)
         var_list = []
@@ -60,3 +77,31 @@ class ProjectReader:
                         value=var_value,
                         public=var_public
                     ))
+        return var_list
+
+    # Get the list of blocks from the project.
+    # It returns a list of Block objects, each representing a block in the project.
+    def get_blocks(self) -> List[Block]:
+        if not self.project_json:
+            self.read_project()
+        
+        project_data = loads(self.project_json)
+        block_list = []
+
+        # Iterate over all targets in the project
+        for target in project_data.get('targets', []):
+            # Get the blocks from the target
+            blocks: List[Dict[str, Any]] = target.get('blocks', {})
+            if blocks:
+                # Iterate over each block in the target
+                for block_id, block_data in blocks:
+                    block_opcode = block_data.get('opcode', '')
+                    block_inputs = block_data.get('inputs', {})
+                    block_fields = block_data.get('fields', {})
+                    block_list.append(Block(
+                        id=block_id,
+                        opcode=block_opcode,
+                        inputs=block_inputs,
+                        fields=block_fields
+                    ))
+        return block_list
