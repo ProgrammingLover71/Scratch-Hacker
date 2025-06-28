@@ -1,7 +1,24 @@
 from zipfile import ZipFile
 from json import loads
 from typing import Any, Dict, List
-from util_classes import Variable
+
+
+# Variable is a class that represents a variable in a Scratch project.
+# It has an ID, a name, a value, and a public flag indicating whether the variable is public or not.
+# The ID is a unique identifier for the variable and is a string of 20 alphanumeric characters.
+class Variable:
+    def __init__(self, id: str, name: str, value: Any, public: bool):
+        self.id = id
+        self.name = name
+        self.value = value
+        self.public = public
+
+    def __repr__(self):
+        return f"Variable(id={self.id}, name={self.name}, value={self.value}, public={self.public})"
+
+
+# ProjectReader is a class that reads a Scratch project file (.sb3) and extracts variables from it.
+# It uses the zipfile module to read the project file and the json module to parse the project's JSON file (named "project.json").
 
 class ProjectReader:
     def __init__(self, project_path: str):
@@ -27,6 +44,7 @@ class ProjectReader:
             raise ValueError("Project JSON not loaded.")
         
         project_data = loads(self.project_json)
+        var_list = []
         # Iterate over all targets in the project
         for target in project_data.get('targets', []):
             # Get the variables from the target
@@ -37,3 +55,9 @@ class ProjectReader:
                     var_name = variables[variable_id][0]
                     var_value = variables[variable_id][1]
                     var_public = (var_name in variable_id)
+                    var_list.append(Variable(
+                        id=variable_id,
+                        name=var_name,
+                        value=var_value,
+                        public=var_public
+                    ))
