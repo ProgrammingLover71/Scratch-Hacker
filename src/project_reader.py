@@ -19,7 +19,6 @@ class Variable:
 
 # ProjectReader is a class that reads a Scratch project file (.sb3) and extracts variables from it.
 # It uses the zipfile module to read the project file and the json module to parse the project's JSON file (named "project.json").
-
 class ProjectReader:
     def __init__(self, project_path: str):
         self.project_path = project_path
