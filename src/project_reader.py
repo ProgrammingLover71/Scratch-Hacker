@@ -1,35 +1,7 @@
 from zipfile import ZipFile
 from json import loads
 from typing import Any, Dict, List
-
-
-# Variable is a class that represents a variable in a Scratch project.
-# It has an ID, a name, a value, and a public flag indicating whether the variable is public or not.
-# The ID is a unique identifier for the variable and is a string of 20 alphanumeric characters.
-class Variable:
-    def __init__(self, id: str, name: str, value: Any, public: bool):
-        self.id = id
-        self.name = name
-        self.value = value
-        self.public = public
-
-    def __repr__(self):
-        return f"Variable(id={self.id}, name={self.name}, value={self.value}, public={self.public})"
-    
-
-# Block is a class that represents a block in a Scratch project.
-# It has an ID, an opcode (the type of block), inputs (a dictionary of input values for the block),
-# and fields (a dictionary of field values for the block).
-class Block:
-    def __init__(self, id: str, opcode: str, inputs: Dict[str, Any], fields: Dict[str, Any]):
-        self.id = id
-        self.opcode = opcode
-        self.inputs = inputs
-        self.fields = fields
-
-    def __repr__(self):
-        return f"Block(id={self.id}, opcode={self.opcode}, inputs={self.inputs}, fields={self.fields})"
-
+from util_classes import Variable, Block
 
 # ProjectReader is a class that reads a Scratch project file (.sb3) and extracts variables from it.
 # It uses the zipfile module to read the project file and the json module to parse the project's JSON file (named "project.json").
