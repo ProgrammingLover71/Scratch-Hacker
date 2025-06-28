@@ -12,5 +12,9 @@ class BlocksToPython:
             # Match the block's opcode and convert it to Python code
             match block.opcode:
                 case "motion_movesteps":
-                    python_code += f"move({block.inputs['STEPS'][1][-1]})\n"
+                    input_type = block.inputs['STEPS'][0]
+                    expr = None
+                    if input_type == 1:
+                        expr = block.inputs['STEPS'][1][1]
+                    python_code += f"move({expr})\n"
         return python_code
