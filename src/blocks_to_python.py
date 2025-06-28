@@ -9,9 +9,8 @@ class BlocksToPython:
     def get_python_from_blocks(blocks: List[Block]) -> str:
         python_code = ""
         for block in blocks:
-            if isinstance(block, Variable):
-                python_code += f"{block.name} = {block.value}\n"
-            else:
-                # Handle other block types as needed
-                pass
+            # Match the block's opcode and convert it to Python code
+            match block.opcode:
+                case "motion_movesteps":
+                    python_code += f"move({block.inputs['STEPS'][1][-1]})\n"
         return python_code
