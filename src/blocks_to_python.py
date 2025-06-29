@@ -34,10 +34,12 @@ class BlocksToPython:
 		block.was_parsed = True  # Mark the block as parsed to avoid re-parsing it
 		#print(f"Parsing block: {block.opcode} with ID: {block.id}")
 		match block.opcode:
+			###### EVENT BLOCKS ######
 			case "event_whenflagclicked":
 				# Handle the "when flag clicked" block
 				return f"{' ' * indent}def main():", indent + 4
 			
+			###### DATA BLOCKS ######
 			case "data_setvariableto":
 				variable_name = block.fields["VARIABLE"][0]
 				value = self.parse_input(block.inputs["VALUE"])
@@ -48,6 +50,7 @@ class BlocksToPython:
 				value = self.parse_input(block.inputs["VALUE"])
 				return f"{' ' * indent}{variable_name} += {value}", indent
 			
+			###### OPERATOR BLOCKS ######
 			case "operator_add":
 				left_value = self.parse_input(block.inputs["NUM1"])
 				right_value = self.parse_input(block.inputs["NUM2"])
@@ -57,10 +60,30 @@ class BlocksToPython:
 				left_value = self.parse_input(block.inputs["NUM1"])
 				right_value = self.parse_input(block.inputs["NUM2"])
 				return f"({left_value} - {right_value})", indent
+
+			case "operator_multiply":
+				left_value = self.parse_input(block.inputs["NUM1"])
+				right_value = self.parse_input(block.inputs["NUM2"])
+				return f"({left_value} * {right_value})", indent
 			
+			case "operator_divide":
+				left_value = self.parse_input(block.inputs["NUM1"])
+				right_value = self.parse_input(block.inputs["NUM2"])
+				return f"({left_value} / {right_value})", indent
+			
+			case "operator_random":
+				min_value = self.parse_input(block.inputs["FROM"])
+				max_value = self.parse_input(block.inputs["TO"])
+				return f"random_int({min_value}, {max_value})", indent
+			
+			###### MOTION BLOCKS ######
 			case "motion_movesteps":
 				steps = self.parse_input(block.inputs["STEPS"])
 				return f"{' ' * indent}move_steps({steps})", indent
+			
+			case "motion_turnright":
+				steps = self.parse_input(block.inputs["DEGREES"])
+				return f"{' ' * indent}turn_degrees({steps})", indent
 			
 			case _:
 				# Handle other block types or return a placeholder
