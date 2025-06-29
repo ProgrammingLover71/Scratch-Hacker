@@ -26,6 +26,7 @@ class Block:
 		self.opcode = opcode
 		self.inputs = inputs
 		self.fields = fields
+		self.was_parsed = False
 
 	def __repr__(self):
 		return f"Block(id='{self.id}', opcode='{self.opcode}', inputs={self.inputs}, fields={self.fields})"
