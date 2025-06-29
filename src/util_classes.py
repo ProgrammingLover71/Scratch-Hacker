@@ -21,12 +21,14 @@ class Variable:
 # It has an ID, an opcode (the type of block), inputs (a dictionary of input values for the block),
 # and fields (a dictionary of field values for the block).
 class Block:
-	def __init__(self, id: str, opcode: str, inputs: Dict[str, Any], fields: Dict[str, Any]):
+	def __init__(self, id: str, opcode: str, inputs: Dict[str, Any], fields: Dict[str, Any], next: str = "", parent: str = ""):
 		self.id = id
 		self.opcode = opcode
 		self.inputs = inputs
 		self.fields = fields
+		self.next = next
+		self.parent = parent
 		self.was_parsed = False
 
 	def __repr__(self):
-		return f"Block(id='{self.id}', opcode='{self.opcode}', inputs={self.inputs}, fields={self.fields})"
+		return f"Block(id='{self.id}', opcode='{self.opcode}', inputs={self.inputs}, fields={self.fields}, next='{self.next}', parent='{self.parent}')"

@@ -36,8 +36,22 @@ class BlocksToPython:
 		match block.opcode:
 			###### EVENT BLOCKS ######
 			case "event_whenflagclicked":
-				# Handle the "when flag clicked" block
-				return f"{' ' * indent}def main():", indent + 4
+				inner_block_id = block.next
+				blocks = []
+				loop_block = Block("", "", {}, {})
+				# Traverse the inner block to find all blocks
+				while inner_block_id != None:
+					print(inner_block_id)
+					loop_block = self.get_block_by_id(inner_block_id)
+					blocks.append(loop_block)
+					inner_block_id = loop_block.next
+				# Convert the inner blocks to Python code
+				inner_code = ""
+				for inner_block in blocks:
+					inner_block_code, _ = self.convert_block_to_python(inner_block, indent)
+					if inner_block_code:
+						inner_code += f"{' ' * (indent + 4)}{inner_block_code.strip()}\n"
+				return f"{' ' * indent}def main():\n{inner_code}", indent
 			
 			###### DATA BLOCKS ######
 			case "data_setvariableto":
@@ -102,6 +116,25 @@ class BlocksToPython:
 				seconds = self.parse_input(block.inputs["SECS"])
 				return f"{' ' * indent}say_for_secs({message}, {seconds})", indent
 			
+			###### CONTROL BLOCKS ######
+			case "control_forever":
+				inner_block_id = block.inputs["SUBSTACK"][1]
+				blocks = []
+				loop_block = Block("", "", {}, {})
+				# Traverse the inner block to find all blocks
+				while inner_block_id != None:
+					print(inner_block_id)
+					loop_block = self.get_block_by_id(inner_block_id)
+					blocks.append(loop_block)
+					inner_block_id = loop_block.next
+				# Convert the inner blocks to Python code
+				inner_code = ""
+				for inner_block in blocks:
+					inner_block_code, _ = self.convert_block_to_python(inner_block, indent + 4)
+					if inner_block_code:
+						inner_code += f"{' ' * (indent + 4)}{inner_block_code}\n"
+				return f"{' ' * indent}while True:\n{inner_code}", indent
+
 			case _:
 				# Handle other block types or return a placeholder
 				return f"\'{block.opcode}\'", indent
@@ -129,3 +162,10 @@ class BlocksToPython:
 					if block.id == block_id:
 						block_code, _ = self.convert_block_to_python(block, 0)
 						return block_code.strip()
+	
+	# Retrieves a block based on its ID
+	def get_block_by_id(self, id: str) -> Block:
+		for block in self.blocks:
+				if block.id == id:
+					return block
+		return Block("", "", {}, {})  # Return an empty block if not found
