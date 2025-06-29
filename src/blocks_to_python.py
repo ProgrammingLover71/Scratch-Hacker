@@ -206,6 +206,6 @@ class BlocksToPython:
 	
 	def is_expression_block(self, opcode: str) -> bool:
 		return opcode.startswith("operator_") or opcode.startswith("sensing_") or opcode.startswith("data_") or opcode in [
-			"motion_direction"
+			"motion_direction", "motion_xposition", "motion_yposition"
 		]
  
