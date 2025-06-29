@@ -8,7 +8,7 @@ from util_classes import Variable, Block
 class ProjectReader:
 	def __init__(self, project_path: str):
 		self.project_path = project_path
-		self.project_json = None
+		self.project_json = ""
 		self.project_asset_files = []
 		self.read_project()
 
@@ -63,10 +63,10 @@ class ProjectReader:
 		# Iterate over all targets in the project
 		for target in project_data.get('targets', []):
 			# Get the blocks from the target
-			blocks: List[Dict[str, Any]] = target.get('blocks', {})
+			blocks: Dict[str, Any] = target.get('blocks', {})
 			if blocks:
 				# Iterate over each block in the target
-				for block_id, block_data in blocks:
+				for block_id, block_data in blocks.values():
 					block_opcode = block_data.get('opcode', '')
 					block_inputs = block_data.get('inputs', {})
 					block_fields = block_data.get('fields', {})
