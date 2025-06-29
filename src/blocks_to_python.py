@@ -9,7 +9,7 @@ class BlocksToPython:
 	# This method assumes that the blocks are of type Block for simplicity.
 	def get_python_from_blocks(self, blocks: List[Block]) -> str:
 		indent = 0
-		python_code = ""
+		python_code = "from scratch_hacker import *\n\n"
 		self.blocks = blocks   # Store the blocks for potential use as arguments in other blocks
 		for block in blocks:
 			# Convert each block to Python code
@@ -49,6 +49,9 @@ class BlocksToPython:
 				left_value = self.parse_input(block.inputs["NUM1"])
 				right_value = self.parse_input(block.inputs["NUM2"])
 				return f"({left_value} + {right_value})", indent
+			case "motion_movesteps":
+				steps = self.parse_input(block.inputs["STEPS"])
+				return f"{' ' * indent}move_steps({steps})", indent
 			case _:
 				# Handle other block types or return a placeholder
 				return f"\'{block.opcode}\'", indent
