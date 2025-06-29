@@ -6,5 +6,5 @@ def move_steps(steps: float) -> None:
 def turn_degrees(degrees: float) -> None:
     pass
 
-def random_int(min_value: int, max_value: int) -> int:
-    return randint(min_value, max_value)
+def random_int(min_value: float, max_value: float) -> int:
+    return randint(int(min_value), int(max_value))
