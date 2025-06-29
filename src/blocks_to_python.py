@@ -32,6 +32,7 @@ class BlocksToPython:
 		if block.was_parsed:
 			return "", indent  # If the block was already parsed, return an empty string and the current indent level
 		block.was_parsed = True  # Mark the block as parsed to avoid re-parsing it
+		#print(f"Parsing block: {block.opcode} with ID: {block.id}")
 		match block.opcode:
 			case "event_whenflagclicked":
 				# Handle the "when flag clicked" block
@@ -60,15 +61,18 @@ class BlocksToPython:
 		# In-place value
 		if value_type == 1:
 			return value_data[-1][1]
-		# Block as value
+		
+		# Block/Variable as value
 		elif value_type == 3:
 			# Handle blocks as inputs
-			block_id = value_data[0][0]
-			# Find the block with the given ID in the stored blocks
-			for block in self.blocks:
-				if block.id == block_id:
-					block_code, _ = self.convert_block_to_python(block, 0)
-					return block_code.strip()
-		
-		#elif value_type == 4:
-		#	return value_data[-1][1]
+			data = value_data[0]
+			if isinstance(data, list):   # If the data is a list, then we have a variable
+				var_name = data[1]
+				return f"{var_name}"
+			else:   # Otherwise, we have a block ID
+				block_id = data
+				# Find the block with the given ID in the stored blocks
+				for block in self.blocks:
+					if block.id == block_id:
+						block_code, _ = self.convert_block_to_python(block, 0)
+						return block_code.strip()
