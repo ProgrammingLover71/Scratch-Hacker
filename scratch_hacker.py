@@ -5,7 +5,7 @@ from math import sin, cos, radians
 ###### MOTION ######
 direction: float = 90.0
 x_position: float = 0.0
-y_position: float = 0.0
+y_position: float = 0.0 
 
 def move_steps(steps: float) -> None:
     global x_position, y_position

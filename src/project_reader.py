@@ -74,7 +74,7 @@ class ProjectReader:
 					block_fields = block_data.get('fields', {})
 					block_next = block_data.get('next', None)
 					block_parent = block_data.get('parent', None)
-					block_list.append(Block(
+					block_list.append(Block( 
 						id=block_id,
 						opcode=block_opcode,
 						inputs=block_inputs,

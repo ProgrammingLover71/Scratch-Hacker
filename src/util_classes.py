@@ -11,7 +11,7 @@ class Variable:
 		self.id = id
 		self.name = name
 		self.value = value
-		self.public = public
+		self.public = public 
 
 	def __repr__(self):
 		return f"Variable(id='{self.id}', name='{self.name}', value='{self.value}', public={self.public})"
