@@ -1,0 +1,11 @@
+from project_reader import ProjectReader
+from blocks_to_python import BlocksToPython
+
+if __name__ == "__main__":
+    # Initialize the project reader
+    project_reader = ProjectReader('./test_project.sb3')
+    # Read the blocks from the project
+    project_blocks = project_reader.get_blocks()
+    # Convert the blocks to Python code
+    output_python = BlocksToPython.get_python_from_blocks(project_blocks)
+    print(output_python)
