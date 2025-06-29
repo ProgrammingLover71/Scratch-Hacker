@@ -9,6 +9,7 @@ def main():
         say_for_secs(my_var, 0.0)
         say(direction)
         if (direction > 50.0):
+            my_var += (my_var / (1.34 * 5.323))
             say("A")
 
 
