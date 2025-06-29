@@ -85,6 +85,23 @@ class BlocksToPython:
 				steps = self.parse_input(block.inputs["DEGREES"])
 				return f"{' ' * indent}turn_degrees({steps})", indent
 			
+			case "motion_turnleft":
+				steps = self.parse_input(block.inputs["DEGREES"])
+				return f"{' ' * indent}turn_degrees(-{steps})", indent
+			
+			case "motion_direction":
+				return f"{' ' * indent}direction", indent
+			
+			###### LOOKS BLOCKS ######
+			case "looks_say":
+				message = self.parse_input(block.inputs["MESSAGE"])
+				return f"{' ' * indent}say({message})", indent
+			
+			case "looks_sayforsecs":
+				message = self.parse_input(block.inputs["MESSAGE"])
+				seconds = self.parse_input(block.inputs["SECS"])
+				return f"{' ' * indent}say_for_secs({message}, {seconds})", indent
+			
 			case _:
 				# Handle other block types or return a placeholder
 				return f"\'{block.opcode}\'", indent
