@@ -14,6 +14,9 @@ class BlocksToPython:
 		for block in blocks:
 			# Convert each block to Python code
 			block_code, new_indent = self.convert_block_to_python(block, indent)
+			# If the block code is empty, skip it
+			if not block_code:
+				continue
 			# Append the converted code to the output
 			python_code += block_code + "\n"
 			# Update the indent level if necessary
@@ -53,9 +56,11 @@ class BlocksToPython:
 	def parse_input(self, input_data: List[Any]) -> Any:
 		value_type = input_data[0]
 		value_data = input_data[1:]  # Remove the type from the input data
-		print(value_type, value_data)  # Debugging output to see the input type and data
+		
+		# In-place value
 		if value_type == 1:
 			return value_data[-1][1]
+		# Block as value
 		elif value_type == 3:
 			# Handle blocks as inputs
 			block_id = value_data[0][0]
@@ -64,5 +69,6 @@ class BlocksToPython:
 				if block.id == block_id:
 					block_code, _ = self.convert_block_to_python(block, 0)
 					return block_code.strip()
-		elif value_type == 4:
-			return value_data[-1][1]
+		
+		#elif value_type == 4:
+		#	return value_data[-1][1]
