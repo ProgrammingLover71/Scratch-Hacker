@@ -1,7 +1,9 @@
 from project_reader import ProjectReader
 from blocks_to_python import BlocksToPython
 
-if __name__ == "__main__":
+DEBUG_TEST_READER_B2PY = True
+
+if __name__ == "__main__" and DEBUG_TEST_READER_B2PY:
     # Initialize the project reader
     project_reader = ProjectReader('./test_project.sb3')
     # Read the blocks from the project
