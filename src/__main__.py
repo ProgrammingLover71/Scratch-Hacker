@@ -3,6 +3,8 @@ from blocks_to_python import BlocksToPython
 
 DEBUG_TEST_READER_B2PY = True
 
+# Main entry point for the script
+# This script reads a Scratch project file and converts its blocks to Python code.
 if __name__ == "__main__" and DEBUG_TEST_READER_B2PY:
     # Initialize the project reader
     project_reader = ProjectReader('./test_project.sb3')
