@@ -32,7 +32,6 @@ class BlocksToPython:
 		if block.was_parsed:
 			return "", indent  # If the block was already parsed, return an empty string and the current indent level
 		block.was_parsed = True  # Mark the block as parsed to avoid re-parsing it
-		#print(f"Parsing block: {block.opcode} with ID: {block.id}")
 		match block.opcode:
 			###### EVENT BLOCKS ######
 			case "event_whenflagclicked":
@@ -40,8 +39,7 @@ class BlocksToPython:
 				blocks = []
 				loop_block = Block("", "", {}, {})
 				# Traverse the inner block to find all blocks
-				while inner_block_id != None:
-					print(inner_block_id)
+				while inner_block_id != None:		
 					loop_block = self.get_block_by_id(inner_block_id)
 					blocks.append(loop_block)
 					inner_block_id = loop_block.next
@@ -90,6 +88,11 @@ class BlocksToPython:
 				max_value = self.parse_input(block.inputs["TO"])
 				return f"random_int({min_value}, {max_value})", indent
 			
+			case "operator_gt":
+				left_value = self.parse_input(block.inputs["OPERAND1"])
+				right_value = self.parse_input(block.inputs["OPERAND2"])
+				return f"({left_value} > {right_value})", indent
+			
 			###### MOTION BLOCKS ######
 			case "motion_movesteps":
 				steps = self.parse_input(block.inputs["STEPS"])
@@ -123,7 +126,6 @@ class BlocksToPython:
 				loop_block = Block("", "", {}, {})
 				# Traverse the inner block to find all blocks
 				while inner_block_id != None:
-					print(inner_block_id)
 					loop_block = self.get_block_by_id(inner_block_id)
 					blocks.append(loop_block)
 					inner_block_id = loop_block.next
@@ -135,33 +137,65 @@ class BlocksToPython:
 						inner_code += f"{' ' * (indent + 4)}{inner_block_code}\n"
 				return f"{' ' * indent}while True:\n{inner_code}", indent
 
+			case "control_if":
+				condition = self.parse_input(block.inputs["CONDITION"])
+				inner_block_id = block.inputs["SUBSTACK"][1]
+				blocks = []
+				loop_block = Block("", "", {}, {})
+				# Traverse the inner block to find all blocks
+				while inner_block_id != None:
+					loop_block = self.get_block_by_id(inner_block_id)
+					blocks.append(loop_block)
+					inner_block_id = loop_block.next
+				# Convert the inner blocks to Python code
+				inner_code = ""
+				for inner_block in blocks:
+					inner_block_code, _ = self.convert_block_to_python(inner_block, indent + 2)
+					if inner_block_code:
+						inner_code += f"{' ' * (indent + 2)}{inner_block_code}\n"
+				return f"{' ' * indent}if {condition}:\n{inner_code}", indent
+
 			case _:
 				# Handle other block types or return a placeholder
 				return f"\'{block.opcode}\'", indent
 	
 	# Parses the input of a block and returns a Python-compatible value.
 	def parse_input(self, input_data: List[Any]) -> Any:
+		if not input_data:
+			return "None"
+		
 		value_type = input_data[0]
 		value_data = input_data[1:]  # Remove the type from the input data
-		
-		# In-place value
+
+		# In-place value (literal)
 		if value_type == 1:
-			return value_data[-1][1]
+			try:
+				return float(value_data[-1][1])
+			except ValueError:
+				return f"\"{value_data[-1][1]}\""
 		
-		# Block/Variable as value
-		elif value_type == 3:
-			# Handle blocks as inputs
+		# Block or Variable (nested input)
+		elif value_type == 2 or value_type == 3:
 			data = value_data[0]
-			if isinstance(data, list):   # If the data is a list, then we have a variable
+			
+			if isinstance(data, list):  # Variable reference
 				var_name = data[1]
-				return f"{var_name}"
-			else:   # Otherwise, we have a block ID
+				return var_name
+			
+			else:  # Block ID
 				block_id = data
-				# Find the block with the given ID in the stored blocks
 				for block in self.blocks:
 					if block.id == block_id:
-						block_code, _ = self.convert_block_to_python(block, 0)
-						return block_code.strip()
+						# Check if it's an expression block
+						if self.is_expression_block(block.opcode):
+							block_code, _ = self.convert_block_to_python(block, 0)
+							return block_code.strip()
+						else:
+							# Unsupported statement in expression context
+							return "None"
+		
+		return "None"  # Fallback
+
 	
 	# Retrieves a block based on its ID
 	def get_block_by_id(self, id: str) -> Block:
@@ -169,3 +203,8 @@ class BlocksToPython:
 				if block.id == id:
 					return block
 		return Block("", "", {}, {})  # Return an empty block if not found
+	
+	def is_expression_block(self, opcode: str) -> bool:
+		return opcode.startswith("operator_") or opcode.startswith("sensing_") or opcode.startswith("data_") or opcode in [
+			"motion_direction"
+		]
