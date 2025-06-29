@@ -23,6 +23,9 @@ class BlocksToPython:
 	@staticmethod
 	def convert_block_to_python(block: Block, indent: int) -> Tuple[str, int]:
 		match block.opcode:
+			case "event_whenflagclicked":
+				# Handle the "when flag clicked" block
+				return f"{' ' * indent}def main():", indent + 4
 			case "data_setvariableto":
 				variable_name = block.fields["VARIABLE"][0]
 				value = block.inputs["VALUE"][0]

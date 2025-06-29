@@ -66,7 +66,9 @@ class ProjectReader:
 			blocks: Dict[str, Any] = target.get('blocks', {})
 			if blocks:
 				# Iterate over each block in the target
-				for block_id, block_data in blocks.values():
+				for block_id in blocks.keys():
+					block_data = blocks[block_id]
+					# Extract the block's ID, opcode, inputs, and fields
 					block_opcode = block_data.get('opcode', '')
 					block_inputs = block_data.get('inputs', {})
 					block_fields = block_data.get('fields', {})
