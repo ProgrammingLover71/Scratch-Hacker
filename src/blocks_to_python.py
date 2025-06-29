@@ -16,6 +16,9 @@ class BlocksToPython:
 			python_code += block_code + "\n"
 			# Update the indent level if necessary
 			indent = new_indent
+		
+		# Add code to call the main function
+		python_code += "\nif __name__ == '__main__':\n\tmain()\n\texit(0)\n"
 		return python_code
 	
 	# Converts a single block to Python code.

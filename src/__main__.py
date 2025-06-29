@@ -12,4 +12,6 @@ if __name__ == "__main__" and DEBUG_TEST_READER_B2PY:
     project_blocks = project_reader.get_blocks()
     # Convert the blocks to Python code
     output_python = BlocksToPython.get_python_from_blocks(project_blocks)
-    print(output_python)
+    # Write the output to a file
+    with open('output.py', 'w', encoding='utf-8') as output_file:
+        output_file.write(output_python)
