@@ -37,21 +37,31 @@ class BlocksToPython:
 			case "event_whenflagclicked":
 				# Handle the "when flag clicked" block
 				return f"{' ' * indent}def main():", indent + 4
+			
 			case "data_setvariableto":
 				variable_name = block.fields["VARIABLE"][0]
 				value = self.parse_input(block.inputs["VALUE"])
 				return f"{' ' * indent}{variable_name} = {value}", indent
+			
 			case "data_changevariableby":
 				variable_name = block.fields["VARIABLE"][0]
 				value = self.parse_input(block.inputs["VALUE"])
 				return f"{' ' * indent}{variable_name} += {value}", indent
+			
 			case "operator_add":
 				left_value = self.parse_input(block.inputs["NUM1"])
 				right_value = self.parse_input(block.inputs["NUM2"])
 				return f"({left_value} + {right_value})", indent
+			
+			case "operator_subtract":
+				left_value = self.parse_input(block.inputs["NUM1"])
+				right_value = self.parse_input(block.inputs["NUM2"])
+				return f"({left_value} - {right_value})", indent
+			
 			case "motion_movesteps":
 				steps = self.parse_input(block.inputs["STEPS"])
 				return f"{' ' * indent}move_steps({steps})", indent
+			
 			case _:
 				# Handle other block types or return a placeholder
 				return f"\'{block.opcode}\'", indent
