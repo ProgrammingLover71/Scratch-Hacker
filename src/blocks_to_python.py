@@ -1,5 +1,5 @@
 from util_classes import Variable, Block
-from typing import List
+from typing import List, Tuple
 
 class BlocksToPython:
 
@@ -10,16 +10,27 @@ class BlocksToPython:
 		indent = 0
 		python_code = ""
 		for block in blocks:
-			# Match the block's opcode and convert it to Python code
-			match block.opcode:
-				case "motion_movesteps":
-					input_type = block.inputs['STEPS'][0]
-					expr = None
-					if input_type == 1:
-						expr = block.inputs['STEPS'][1][1]
-					python_code += "\t" * indent + f"move({expr})\n"
-				case "event_whenflagclicked":
-					python_code += "if flag_clicked():\n"
-					indent += 1
-				
+			# Convert each block to Python code
+			block_code, new_indent = BlocksToPython.convert_block_to_python(block, indent)
+			# Append the converted code to the output
+			python_code += block_code + "\n"
+			# Update the indent level if necessary
+			indent = new_indent
 		return python_code
+	
+	# Converts a single block to Python code.
+	# This method should be implemented to handle different block types.
+	@staticmethod
+	def convert_block_to_python(block: Block, indent: int) -> Tuple[str, int]:
+		match block.opcode:
+			case "data_setvariableto":
+				variable_name = block.fields["VARIABLE"][0]
+				value = block.inputs["VALUE"][0]
+				return f"{' ' * indent}{variable_name} = {value}", indent
+			case "data_changevariableby":
+				variable_name = block.fields["VARIABLE"][0]
+				value = block.inputs["VALUE"][0]
+				return f"{' ' * indent}{variable_name} += {value}", indent
+			case _:
+				# Handle other block types or return a placeholder
+				return f"{' ' * indent}# Unsupported block type: {block.opcode}", indent
