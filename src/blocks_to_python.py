@@ -15,6 +15,7 @@ class BlocksToPython:
 				case "motion_movesteps":
 					input_type = block.inputs['STEPS'][0]
 					expr = None
+					# If the input is an in-place value
 					if input_type == 1:
 						expr = block.inputs['STEPS'][1][1]
 					python_code += "\t" * indent + f"move({expr})\n"
