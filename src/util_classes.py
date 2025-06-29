@@ -14,7 +14,7 @@ class Variable:
         self.public = public
 
     def __repr__(self):
-        return f"Variable(id={self.id}, name={self.name}, value={self.value}, public={self.public})"
+        return f"Variable(id='{self.id}', name='{self.name}', value='{self.value}', public={self.public})"
     
 
 # Block is a class that represents a block in a Scratch project.
@@ -28,4 +28,4 @@ class Block:
         self.fields = fields
 
     def __repr__(self):
-        return f"Block(id={self.id}, opcode={self.opcode}, inputs={self.inputs}, fields={self.fields})"
+        return f"Block(id='{self.id}', opcode='{self.opcode}', inputs={self.inputs}, fields={self.fields})"
