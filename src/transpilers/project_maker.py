@@ -77,7 +77,7 @@ class ProjectMaker:
 
     # Creates the complete Scratch project JSON structure.
     # It includes the default stage and a sprite with its blocks and variables.
-    def create_project_json(self, sprite_data: list):
+    def create_project_json(self, sprite_data: dict):
         return {
             'targets': [
                 self.create_default_stage(),
