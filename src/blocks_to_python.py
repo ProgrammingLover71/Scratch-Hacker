@@ -49,7 +49,7 @@ class BlocksToPython:
 					inner_block_code, _ = self.convert_block_to_python(inner_block, indent)
 					if inner_block_code:
 						inner_code += f"{' ' * (indent + 4)}{inner_block_code.strip()}\n"
-				return f"{' ' * indent}def main():\n{inner_code}", indent
+				return f"{' ' * indent}@when_flag_clicked\n{' ' * indent}def main():\n{inner_code}", indent
 			
 			###### DATA BLOCKS ######
 			case "data_setvariableto":

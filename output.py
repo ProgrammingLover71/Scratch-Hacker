@@ -1,5 +1,6 @@
 from scratch_hacker import *
 
+@when_flag_clicked
 def main():
     my_var = (1.0 + 1.0)
     my_var += my_var
@@ -14,5 +15,5 @@ def main():
 
 
 if __name__ == '__main__':
-	main() 
+	main()
 	exit(0)

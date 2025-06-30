@@ -28,3 +28,15 @@ def say_for_secs(message: Any, seconds: float) -> None:
 ###### OPERATORS ######
 def random_int(min_value: float, max_value: float) -> int:
     return randint(int(min_value), int(max_value))
+
+
+###### DECORATORS ######
+def when_flag_clicked(func):
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+def run_without_screen_refresh(func):
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
