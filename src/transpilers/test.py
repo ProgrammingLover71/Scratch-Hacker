@@ -6,7 +6,7 @@ code = """
 def main():
     x = 5
     x += 2
-    x -= 3
+    x -= 3 + 1
 """
 
 def main():
@@ -26,8 +26,11 @@ def main():
         'name': 'MySprite'
     })
     
+    with open('project.json', 'w') as f:
+        import json
+        json.dump(project_json, f, indent=4)
     # Save the project JSON to a file
-    project_maker.save_project(project_json, 'project.sb3')
+    #project_maker.save_project(project_json, 'project.sb3')
 
 if __name__ == "__main__":
     main()

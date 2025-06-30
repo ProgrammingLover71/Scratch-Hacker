@@ -64,7 +64,11 @@ class PythonToBlocks(ast.NodeVisitor):
         if isinstance(op, ast.Add):
             pass
         elif isinstance(op, ast.Sub):
-            value = -value
+            inp_id = self.new_id()
+            self.blocks[inp_id] = self.make_binop(ConstantArg(0), value, 'operator_subtract')
+            self.blocks[inp_id]['parent'] = block_id  # Set the parent ID for the binop
+            self.block_ids.append(inp_id)
+            value = BlockArg(inp_id)  # Use the binop block as the value
         else:
             raise ValueError(f"Unsupported augmented assignment operation: {ast.dump(op)}")
         self.blocks[block_id] = {
@@ -104,7 +108,15 @@ class PythonToBlocks(ast.NodeVisitor):
         else:
             raise ValueError(f"Unsupported binary operation: {ast.dump(op)}")
         block_id = self.new_id()
-        self.blocks[block_id] = {
+        self.blocks[block_id] = self.make_binop(left, right, opcode)
+        self.expr_parent_id = None
+        self.link_last_block(block_id)  # Link to the last block
+        self.block_ids.append(block_id)
+        return BlockArg(block_id)  # Return a BlockArg for the block ID
+    
+
+    def make_binop(self, left, right, opcode):
+        return {
             'opcode': opcode,
             'inputs': {
                 'NUM1': self.create_input(left),
@@ -115,10 +127,6 @@ class PythonToBlocks(ast.NodeVisitor):
             'fields': {},
             'topLevel': False
         }
-        self.expr_parent_id = None
-        self.link_last_block(block_id)  # Link to the last block
-        self.block_ids.append(block_id)
-        return BlockArg(block_id)  # Return a BlockArg for the block ID
 
     
     # This method is called when a function definition is encountered in the Python code.
@@ -170,7 +178,7 @@ class PythonToBlocks(ast.NodeVisitor):
         elif isinstance(value, BlockArg):
             return [3, value.block_id]
         else:
-            raise ValueError(f"Unsupported input type: {type(value).__name__}")
+            raise ValueError(f"Unsupported input type: {type(value).__name__} (value: {value})")
     
 
     def link_last_block(self, block_id):
