@@ -1,7 +1,16 @@
+from json import dumps
+from zipfile import ZipFile
+
+# This module provides functionality to create a Scratch project structure in JSON format.
+# It includes methods to create a default stage, add sprites with their blocks and variables,
+# and generate the complete project JSON structure.
 class ProjectMaker:
     def __init__(self):
         pass
 
+
+    # Creates a default stage for the Scratch project.
+    # The stage includes properties like name, variables, costumes, and sounds.
     def create_default_stage(self):
         return {
             'isStage': True,
@@ -31,6 +40,9 @@ class ProjectMaker:
             'textToSpeechLanguage': None,
         }
     
+
+    # Creates a sprite with its blocks and variables.
+    # The sprite includes properties like name, variables, costumes, and sounds.
     def create_sprite(self, sprite_blocks, sprite_variables, sprite_name='Sprite'):
         return {
             'isStage': False,
@@ -63,6 +75,8 @@ class ProjectMaker:
         }
 
 
+    # Creates the complete Scratch project JSON structure.
+    # It includes the default stage and a sprite with its blocks and variables.
     def create_project_json(self, sprite_data: list):
         return {
             'targets': [
@@ -78,3 +92,18 @@ class ProjectMaker:
                 'isScratch3Project': True
             }
         }
+    
+    # Saves the project JSON to a file and creates a ZIP archive.
+    def save_project(self, project_json, filename='project.sb3'):
+        with ZipFile(filename, 'w') as zip_file:
+            # Save the project JSON to a file inside the ZIP archive
+            zip_file.writestr('project.json', dumps(project_json, indent=4))
+            # Add the assets directory (if needed, can be empty)
+            zip_file.writestr('assets/', '')  # Create an empty assets directory
+            # Add the assets (located in ./project_assets/)
+            zip_file.write('project_assets/', arcname='assets/')
+            with open('project_assets/cd21514d0531fdffb22204e0ec5ed84a.svg', 'rb') as f:
+                zip_file.writestr('assets/cd21514d0531fdffb22204e0ec5ed84a.svg', f.read())
+            with open('project_assets/bcf454acf82e4504149f7ffe07081dbc.svg', 'rb') as f:
+                zip_file.writestr('assets/bcf454acf82e4504149f7ffe07081dbc.svg', f.read())
+        
