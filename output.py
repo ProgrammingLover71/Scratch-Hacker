@@ -12,8 +12,3 @@ def main():
         if (direction > 50.0):
             my_var += (my_var / (1.34 * 5.323))
             say("A")
-
-
-if __name__ == '__main__':
-	main()
-	exit(0)
