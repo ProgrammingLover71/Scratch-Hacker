@@ -1,5 +1,6 @@
 from project_reader import ProjectReader
-from blocks_to_python import BlocksToPython
+from transpilers.blocks_to_python import BlocksToPython
+from transpilers.python_to_blocks import PythonToBlocks
 
 DEBUG_TEST_READER_B2PY = True
 
