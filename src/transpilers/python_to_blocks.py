@@ -7,7 +7,7 @@ from py2b_utils import *
 class PythonToBlocks(ast.NodeVisitor):
     def __init__(self):
         self.blocks = {}
-        self.variables = []  # To keep track of variable names
+        self.variables = {}  # To keep track of variable names
         self.next_id = 0
         self.expr_parent_id = None  # To keep track of the parent block ID for expressions
         self.flag_click_block_id = ''
@@ -48,7 +48,7 @@ class PythonToBlocks(ast.NodeVisitor):
         }
         self.link_last_block(block_id)  # Link to the last block
         self.block_ids.append(block_id)
-        self.variables.append(target)
+        self.variables[f'var_{target}'] = [target, 0]
     
     # This method is called when an augmented assignment statement is encountered in the Python code.
     # It generates a block that represents the operation.
