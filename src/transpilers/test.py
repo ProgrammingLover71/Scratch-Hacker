@@ -26,4 +26,8 @@ def main():
         'name': 'MySprite'
     })
     
-    project_maker.save_project(project_json, 'project.sb3')
+    print(project_json)  # Print the project JSON to the console for debugging
+    #project_maker.save_project(project_json, 'project.sb3')
+
+if __name__ == "__main__":
+    main()

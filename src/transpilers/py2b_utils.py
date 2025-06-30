@@ -2,6 +2,19 @@ class ConstantArg:
     def __init__(self, value):
         self.value = value
     
+    def __eq__(self, other):
+        if isinstance(other, ConstantArg):
+            return self.value == other.value
+        return False
+
+    def __sub__(self, other):
+        if isinstance(other, ConstantArg):
+            return ConstantArg(self.value - other.value)
+        return NotImplemented
+    
+    def __neg__(self):
+        return ConstantArg(-self.value)
+    
     def __repr__(self):
         return f"Constant({self.value})"
 

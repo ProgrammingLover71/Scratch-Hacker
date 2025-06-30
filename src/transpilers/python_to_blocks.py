@@ -33,11 +33,11 @@ class PythonToBlocks(ast.NodeVisitor):
         target = node.targets[0].id
         block_id = self.new_id()
         self.expr_parent_id = block_id  # Set the parent ID for expressions
-        value = self.create_input(self.visit(node.value))
+        value = self.visit(node.value)
         self.blocks[block_id] = {
             'opcode': 'data_setvariableto',
             'inputs': {
-                'VALUE': value
+                'VALUE': self.create_input(value),
             },
             'next': None,
             'parent': self.block_ids[-1] if self.block_ids else None,
@@ -58,7 +58,7 @@ class PythonToBlocks(ast.NodeVisitor):
         target = node.target.id
         block_id = self.new_id()
         self.expr_parent_id = block_id  # Set the parent ID for expressions
-        value = self.create_input(self.visit(node.value))  # Get the value of the augmented assignment
+        value = self.visit(node.value)  # Get the value of the augmented assignment
         op = node.op
         opcode = 'data_changevariableby'
         if isinstance(op, ast.Add):
@@ -70,7 +70,7 @@ class PythonToBlocks(ast.NodeVisitor):
         self.blocks[block_id] = {
             'opcode': opcode,
             'inputs': {
-                'VALUE': value
+                'VALUE': self.create_input(value)
             },
             'next': None,
             'parent': self.block_ids[-1] if self.block_ids else None,

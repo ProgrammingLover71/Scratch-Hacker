@@ -101,9 +101,8 @@ class ProjectMaker:
             # Add the assets directory (if needed, can be empty)
             zip_file.writestr('assets/', '')  # Create an empty assets directory
             # Add the assets (located in ./project_assets/)
-            zip_file.write('project_assets/', arcname='assets/')
-            with open('project_assets/cd21514d0531fdffb22204e0ec5ed84a.svg', 'rb') as f:
+            with open('./project_assets/cd21514d0531fdffb22204e0ec5ed84a.svg', 'rb') as f:
                 zip_file.writestr('assets/cd21514d0531fdffb22204e0ec5ed84a.svg', f.read())
-            with open('project_assets/bcf454acf82e4504149f7ffe07081dbc.svg', 'rb') as f:
+            with open('./project_assets/bcf454acf82e4504149f7ffe07081dbc.svg', 'rb') as f:
                 zip_file.writestr('assets/bcf454acf82e4504149f7ffe07081dbc.svg', f.read())
         
