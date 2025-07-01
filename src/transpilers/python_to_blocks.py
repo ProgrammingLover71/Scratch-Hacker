@@ -10,6 +10,7 @@ class PythonToBlocks(ast.NodeVisitor):
         self.variables = {}  # To keep track of variable names
         self.next_id = 0
         self.flag_click_block_id = ''
+        self.expr_parent_id = ''
         self.stack_blocks = BlockChain()  # To keep track of the block chain
         self.expr_blocks = BlockChain()  # To keep track of expression blocks
     
@@ -34,8 +35,16 @@ class PythonToBlocks(ast.NodeVisitor):
             if prev_block:
                 prev_block['next'] = cur_id
                 cur_block['parent'] = prev_id
-            [prev_id, prev_block] = [cur_id, cur_block]
+            prev_id = cur_id
+            prev_block = cur_block
+        self.link_expressions()
         return self.blocks
+
+
+    def link_expressions(self):
+        expr_blocks = [block for block in self.blocks if block['P2S_ISEXPR']]
+        for block in expr_blocks:
+            print(block)
     
 
     # This method is called when a variable assignment is encountered in the Python code.
@@ -44,8 +53,9 @@ class PythonToBlocks(ast.NodeVisitor):
     # set the value of a variable in the block-based representation.
     def visit_Assign(self, node: ast.Assign):
         target = node.targets[0].id
-        value = self.visit(node.value)
         block_id = self.new_id()
+        self.expr_parent_id = block_id
+        value = self.visit(node.value)
         block = {
             'opcode': 'data_setvariableto',
             'inputs': {
@@ -57,7 +67,8 @@ class PythonToBlocks(ast.NodeVisitor):
                 'VARIABLE': [target, target]
             },
             'topLevel': False,
-            'P2S_ID': block_id
+            'P2S_ID': block_id,
+            'P2S_ISEXPR': False
         }
         self.blocks.append(block)
         self.variables[f'var_{target}'] = [target, 0]
@@ -69,8 +80,9 @@ class PythonToBlocks(ast.NodeVisitor):
     # change the value of a variable in the block-based representation.
     def visit_AugAssign(self, node):
         target = node.target.id
-        value = self.visit(node.value)  # Get the value of the augmented assignment
         block_id = self.new_id()
+        self.expr_parent_id = block_id
+        value = self.visit(node.value)  # Get the value of the augmented assignment
         op = node.op
         opcode = 'data_changevariableby'
         if isinstance(op, ast.Add):
@@ -92,7 +104,8 @@ class PythonToBlocks(ast.NodeVisitor):
                 'VARIABLE': [target, target]
             },
             'topLevel': False,
-            'P2S_ID': block_id
+            'P2S_ID': block_id,
+            'P2S_ISEXPR': False
         }
         self.blocks.append(block)
         return [block_id, block]
@@ -103,6 +116,9 @@ class PythonToBlocks(ast.NodeVisitor):
     # The block is created with the appropriate opcode based on the operation type.
     # The inputs for the block are the left and right operands of the operation.
     def visit_BinOp(self, node):
+        parent_id = self.expr_parent_id
+        block_id = self.new_id()
+        self.expr_parent_id = block_id
         left = self.visit(node.left)  # Visit the left operand
         right = self.visit(node.right)  # Visit the right operand
         op = node.op
@@ -117,12 +133,15 @@ class PythonToBlocks(ast.NodeVisitor):
             opcode = 'operator_divide'
         else:
             raise ValueError(f"Unsupported binary operation: {ast.dump(op)}")
-        block = self.make_binop(left, right, opcode)
+        block = self.make_binop(left, right, opcode, block_id)
+        block['parent'] = parent_id
         self.blocks.append(block)
         return BlockArg(block['P2S_ID'])
     
 
-    def make_binop(self, left, right, opcode):
+    def make_binop(self, left, right, opcode, id=None):
+        if not id:
+            id = self.new_id()
         return {
             'opcode': opcode,
             'inputs': {
@@ -133,7 +152,8 @@ class PythonToBlocks(ast.NodeVisitor):
             'parent': None,
             'fields': {},
             'topLevel': False,
-            'P2S_ID': self.new_id()
+            'P2S_ID': id,
+            'P2S_ISEXPR': True
         }
 
     
@@ -157,7 +177,8 @@ class PythonToBlocks(ast.NodeVisitor):
                     'topLevel': True,
                     'x': 100,
                     'y': 100,
-                    'P2S_ID': block_id
+                    'P2S_ID': block_id,
+                    'P2S_ISEXPR': False
                 }
                 self.blocks.append(block)
                 [prev_id, prev_block] = ['', {}]

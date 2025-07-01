@@ -42,13 +42,14 @@
                 "block_1": {
                     "opcode": "event_whenflagclicked",
                     "inputs": {},
-                    "next": "block_2",
+                    "next": null,
                     "parent": null,
                     "fields": {},
                     "topLevel": true,
                     "x": 100,
                     "y": 100,
-                    "P2S_ID": "block_1"
+                    "P2S_ID": "block_1",
+                    "P2S_ISEXPR": false
                 },
                 "block_2": {
                     "opcode": "data_setvariableto",
@@ -62,7 +63,7 @@
                         ]
                     },
                     "next": "block_3",
-                    "parent": "block_1",
+                    "parent": null,
                     "fields": {
                         "VARIABLE": [
                             "x",
@@ -70,7 +71,8 @@
                         ]
                     },
                     "topLevel": false,
-                    "P2S_ID": "block_2"
+                    "P2S_ID": "block_2",
+                    "P2S_ISEXPR": false
                 },
                 "block_3": {
                     "opcode": "data_changevariableby",
@@ -83,7 +85,7 @@
                             ]
                         ]
                     },
-                    "next": "block_5",
+                    "next": "block_4",
                     "parent": "block_2",
                     "fields": {
                         "VARIABLE": [
@@ -92,9 +94,10 @@
                         ]
                     },
                     "topLevel": false,
-                    "P2S_ID": "block_3"
+                    "P2S_ID": "block_3",
+                    "P2S_ISEXPR": false
                 },
-                "block_4": {
+                "block_5": {
                     "opcode": "operator_add",
                     "inputs": {
                         "NUM1": [
@@ -113,10 +116,11 @@
                         ]
                     },
                     "next": null,
-                    "parent": "block_6",
+                    "parent": "block_4",
                     "fields": {},
                     "topLevel": false,
-                    "P2S_ID": "block_4"
+                    "P2S_ID": "block_5",
+                    "P2S_ISEXPR": true
                 },
                 "block_6": {
                     "opcode": "operator_subtract",
@@ -130,21 +134,22 @@
                         ],
                         "NUM2": [
                             3,
-                            "block_4"
+                            "block_5"
                         ]
                     },
-                    "next": "block_4",
-                    "parent": "block_5",
+                    "next": null,
+                    "parent": "block_4",
                     "fields": {},
                     "topLevel": false,
-                    "P2S_ID": "block_6"
+                    "P2S_ID": "block_6",
+                    "P2S_ISEXPR": true
                 },
-                "block_5": {
+                "block_4": {
                     "opcode": "data_changevariableby",
                     "inputs": {
                         "VALUE": [
                             3,
-                            "block_4"
+                            "block_6"
                         ]
                     },
                     "next": null,
@@ -156,7 +161,8 @@
                         ]
                     },
                     "topLevel": false,
-                    "P2S_ID": "block_5"
+                    "P2S_ID": "block_4",
+                    "P2S_ISEXPR": false
                 }
             },
             "comments": {},
