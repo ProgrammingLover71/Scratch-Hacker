@@ -5,6 +5,9 @@ code = """
 x = 5
 x += 2
 x -= 3 + 1
+y = 17 / 3
+y += 16 / 7
+y -= 23 / (9 + x)
 """
 
 def main():
@@ -24,9 +27,9 @@ def main():
         'name': 'MySprite'
     })
     
-    with open('project.json', 'w') as f:
-        import json
-        json.dump(project_json, f, indent=4)
+    #with open('project.json', 'w') as f:
+    #    import json
+    #    json.dump(project_json, f, indent=4)
     # Save the project JSON to a file
     project_maker.save_project(project_json, 'project.sb3')
 

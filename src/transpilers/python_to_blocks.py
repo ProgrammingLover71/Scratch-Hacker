@@ -11,8 +11,6 @@ class PythonToBlocks(ast.NodeVisitor):
         self.next_id = 0
         self.flag_click_block_id = ''
         self.expr_parent_id = ''
-        self.stack_blocks = BlockChain()  # To keep track of the block chain
-        self.expr_blocks = BlockChain()  # To keep track of expression blocks
     
     # Returns an ID for a new block.
     # This ID is a string that starts with "block_" followed by an incrementing number.
@@ -200,6 +198,10 @@ class PythonToBlocks(ast.NodeVisitor):
             return ConstantArg(node.value)
         else:
             raise ValueError(f"Unsupported constant type: {type(node.value).__name__}")
+    
+
+    def visit_Name(self, node):
+        return VariableArg(f"var_{node.id}")
 
 
     # This method is called when parsing an input value for a block.
@@ -211,6 +213,8 @@ class PythonToBlocks(ast.NodeVisitor):
             return [1, [10, value.value]]
         elif isinstance(value, BlockArg):
             return [3, value.block_id]
+        elif isinstance(value, VariableArg):
+            return [3, value.var]
         else:
             raise ValueError(f"Unsupported input type: {type(value).__name__} (value: {value})")
     
