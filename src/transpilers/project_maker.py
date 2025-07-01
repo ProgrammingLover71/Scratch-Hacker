@@ -1,4 +1,5 @@
 from json import dumps
+import uuid
 from zipfile import ZipFile
 
 # This module provides functionality to create a Scratch project structure in JSON format.
@@ -44,13 +45,16 @@ class ProjectMaker:
     # Creates a sprite with its blocks and variables.
     # The sprite includes properties like name, variables, costumes, and sounds.
     def create_sprite(self, sprite_blocks, sprite_variables, sprite_name='Sprite'):
+        
+        new_blocks = {blk['P2S_ID']: blk for blk in sprite_blocks}
+
         return {
             'isStage': False,
             'name': sprite_name,
             'variables': sprite_variables,
             'lists': {},
             'broadcasts': {},
-            'blocks': sprite_blocks,
+            'blocks': new_blocks,
             'comments': {},
             'currentCostume': 0,
             'costumes': [

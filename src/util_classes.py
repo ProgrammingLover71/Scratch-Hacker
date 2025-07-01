@@ -7,7 +7,7 @@ from typing import Any, Dict
 # It has an ID, a name, a value, and a public flag indicating whether the variable is public or not.
 # The ID is a unique identifier for the variable and is a string of 20 alphanumeric characters.
 class Variable:
-	def __init__(self, id: str, name: str, value: Any, public: bool):
+	def __init__(self, id: str, name: str, value: Any, public: bool = False):
 		self.id = id
 		self.name = name
 		self.value = value
@@ -28,7 +28,6 @@ class Block:
 		self.fields = fields
 		self.next = next
 		self.parent = parent
-		self.was_parsed = False
 
 	def __repr__(self):
 		return f"Block(id='{self.id}', opcode='{self.opcode}', inputs={self.inputs}, fields={self.fields}, next='{self.next}', parent='{self.parent}')"
