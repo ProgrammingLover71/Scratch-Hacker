@@ -214,7 +214,7 @@ class PythonToBlocks(ast.NodeVisitor):
         elif isinstance(value, BlockArg):
             return [3, value.block_id]
         elif isinstance(value, VariableArg):
-            return [3, value.var]
+            return [3, [12, value.var, value.var]]
         else:
             raise ValueError(f"Unsupported input type: {type(value).__name__} (value: {value})")
     
