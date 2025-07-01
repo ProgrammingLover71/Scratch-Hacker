@@ -88,7 +88,7 @@ class ProjectMaker:
             'meta': {
                 'semver': '3.0.0',
                 'vm': '2.0.0',
-                'agent': 'PythonToScratch Compiler v1.0',
+                'agent': 'PythonToBlocks Compiler v1.0 (Scratch Hacker)',
                 'isScratch3Project': True
             }
         }
@@ -98,11 +98,7 @@ class ProjectMaker:
         with ZipFile(filename, 'w') as zip_file:
             # Save the project JSON to a file inside the ZIP archive
             zip_file.writestr('project.json', dumps(project_json, indent=4))
-            # Add the assets directory (if needed, can be empty)
-            zip_file.writestr('assets/', '')  # Create an empty assets directory
-            # Add the assets (located in ./project_assets/)
-            with open('./project_assets/cd21514d0531fdffb22204e0ec5ed84a.svg', 'rb') as f:
-                zip_file.writestr('assets/cd21514d0531fdffb22204e0ec5ed84a.svg', f.read())
-            with open('./project_assets/bcf454acf82e4504149f7ffe07081dbc.svg', 'rb') as f:
-                zip_file.writestr('assets/bcf454acf82e4504149f7ffe07081dbc.svg', f.read())
+            # Add the assets (costumes) to the ZIP archive
+            zip_file.write('./transpilers/project_assets/cd21514d0531fdffb22204e0ec5ed84a.svg', 'cd21514d0531fdffb22204e0ec5ed84a.svg')
+            zip_file.write('./transpilers/project_assets/bcf454acf82e4504149f7ffe07081dbc.svg', 'bcf454acf82e4504149f7ffe07081dbc.svg')
         

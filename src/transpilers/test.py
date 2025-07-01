@@ -30,7 +30,7 @@ def main():
         import json
         json.dump(project_json, f, indent=4)
     # Save the project JSON to a file
-    #project_maker.save_project(project_json, 'project.sb3')
+    project_maker.save_project(project_json, 'project.sb3')
 
 if __name__ == "__main__":
     main()

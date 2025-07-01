@@ -9,9 +9,8 @@ class PythonToBlocks(ast.NodeVisitor):
         self.blocks = {}
         self.variables = {}  # To keep track of variable names
         self.next_id = 0
-        self.expr_parent_id = None  # To keep track of the parent block ID for expressions
         self.flag_click_block_id = ''
-        self.block_ids = []  # To keep track of all block IDs
+        self.block_chain = BlockChain()  # To keep track of the block chain
     
     # Returns an ID for a new block.
     # This ID is a string that starts with "block_" followed by an incrementing number.
@@ -19,6 +18,14 @@ class PythonToBlocks(ast.NodeVisitor):
         self.next_id += 1
         return f"block_{self.next_id}"
     
+    
+    # This method is called when the root module of the Python code is encountered.
+    # It iterates through all the statements in the module body and visits each statement.
+    # It returns the blocks generated from the statements.
+    # The blocks are stored in the `self.blocks` dictionary, which maps block IDs to
+    # their properties such as opcode, inputs, next block ID, parent block ID, fields, and topLevel status.
+    # The `visit` method is a generic method that calls the appropriate visit method based on
+    # the type of the node (statement) it receives.
     def visit_Module(self, node):
         for statement in node.body:
             self.visit(statement)
@@ -34,20 +41,18 @@ class PythonToBlocks(ast.NodeVisitor):
         block_id = self.new_id()
         self.expr_parent_id = block_id  # Set the parent ID for expressions
         value = self.visit(node.value)
-        self.blocks[block_id] = {
+        self.block_chain.add(BlockNode({
             'opcode': 'data_setvariableto',
             'inputs': {
                 'VALUE': self.create_input(value),
             },
             'next': None,
-            'parent': self.block_ids[-1] if self.block_ids else None,
+            'parent': None,
             'fields': {
                 'VARIABLE': [target, target]
             },
             'topLevel': False
-        }
-        self.link_last_block(block_id)  # Link to the last block
-        self.block_ids.append(block_id)
+        }))
         self.variables[f'var_{target}'] = [target, 0]
     
     # This method is called when an augmented assignment statement is encountered in the Python code.
@@ -65,26 +70,22 @@ class PythonToBlocks(ast.NodeVisitor):
             pass
         elif isinstance(op, ast.Sub):
             inp_id = self.new_id()
-            self.blocks[inp_id] = self.make_binop(ConstantArg(0), value, 'operator_subtract')
-            self.blocks[inp_id]['parent'] = block_id  # Set the parent ID for the binop
-            self.block_ids.append(inp_id)
+            idx = self.block_chain.add(BlockNode(self.make_binop(ConstantArg(0), value, 'operator_subtract')))
             value = BlockArg(inp_id)  # Use the binop block as the value
         else:
             raise ValueError(f"Unsupported augmented assignment operation: {ast.dump(op)}")
-        self.blocks[block_id] = {
+        self.block_chain.add(BlockNode({
             'opcode': opcode,
             'inputs': {
                 'VALUE': self.create_input(value)
             },
             'next': None,
-            'parent': self.block_ids[-1] if self.block_ids else None,
+            'parent': None,
             'fields': {
                 'VARIABLE': [target, target]
             },
             'topLevel': False
-        }
-        self.link_last_block(block_id)  # Link to the last block
-        self.block_ids.append(block_id)
+        }))
         return BlockArg(block_id)  # Return a BlockArg for the block ID
     
 
@@ -109,9 +110,7 @@ class PythonToBlocks(ast.NodeVisitor):
             raise ValueError(f"Unsupported binary operation: {ast.dump(op)}")
         block_id = self.new_id()
         self.blocks[block_id] = self.make_binop(left, right, opcode)
-        self.expr_parent_id = None
-        self.link_last_block(block_id)  # Link to the last block
-        self.block_ids.append(block_id)
+        self.add_block(block_id, is_stack_block=False)
         return BlockArg(block_id)  # Return a BlockArg for the block ID
     
 
@@ -123,7 +122,7 @@ class PythonToBlocks(ast.NodeVisitor):
                 'NUM2': self.create_input(right)
             },
             'next': None,
-            'parent': self.expr_parent_id,
+            'parent': None,
             'fields': {},
             'topLevel': False
         }
@@ -141,7 +140,7 @@ class PythonToBlocks(ast.NodeVisitor):
             # We need to check if the function is decorated with `when_flag_clicked`
             if any(decorator.id == 'when_flag_clicked' for decorator in node.decorator_list):
                 self.flag_click_block_id = block_id   # Set the flag click block ID for later use
-                self.block_ids.append(self.flag_click_block_id)
+                self.add_block(block_id, is_stack_block=True)
                 self.blocks[block_id] = {
                     'opcode': 'event_whenflagclicked',
                     'inputs': {},
@@ -168,6 +167,21 @@ class PythonToBlocks(ast.NodeVisitor):
             raise ValueError(f"Unsupported constant type: {type(node.value).__name__}")
 
 
+    # This method is called when a block ID is added to the list of block IDs.
+    # It appends the block ID to the `self.block_ids` list, which keeps track of all block IDs generated during the parsing process.
+    # This is useful for later reference or for generating the final project structure.
+    def add_block(self, block_id, is_stack_block=True):
+        self.block_ids.append((block_id, is_stack_block))
+
+
+    # This method is called to retrieve the last stack block ID from the list of block IDs.
+    # It iterates through the list in reverse order and returns the first block ID that is a stack block (i.e., `is_stack_block` is True).
+    # This is useful for identifying the last stack block in the sequence of blocks.
+    def get_last_stack_block_id(self):
+        for block_id, is_stack_block in reversed(self.block_ids):
+            if is_stack_block:
+                return block_id
+
     # This method is called when parsing an input value for a block.
     # It checks if the value is a ConstantArg or a BlockArg and returns the appropriate
     # representation for the block input.
@@ -180,8 +194,3 @@ class PythonToBlocks(ast.NodeVisitor):
         else:
             raise ValueError(f"Unsupported input type: {type(value).__name__} (value: {value})")
     
-
-    def link_last_block(self, block_id):
-        last_block = self.blocks[self.block_ids[-1]]
-        if last_block['opcode'] not in ['operator_add', 'operator_subtract', 'operator_multiply', 'operator_divide']:
-            last_block['next'] = block_id  # Link to the next block

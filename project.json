@@ -42,7 +42,7 @@
                 "block_1": {
                     "opcode": "event_whenflagclicked",
                     "inputs": {},
-                    "next": "block_2",
+                    "next": null,
                     "parent": null,
                     "fields": {},
                     "topLevel": true,
@@ -60,7 +60,7 @@
                             ]
                         ]
                     },
-                    "next": "block_3",
+                    "next": null,
                     "parent": "block_1",
                     "fields": {
                         "VARIABLE": [
@@ -81,7 +81,7 @@
                             ]
                         ]
                     },
-                    "next": "block_5",
+                    "next": null,
                     "parent": "block_2",
                     "fields": {
                         "VARIABLE": [
@@ -110,7 +110,7 @@
                         ]
                     },
                     "next": null,
-                    "parent": "block_4",
+                    "parent": null,
                     "fields": {},
                     "topLevel": false
                 },
@@ -181,7 +181,7 @@
     "meta": {
         "semver": "3.0.0",
         "vm": "2.0.0",
-        "agent": "PythonToScratch Compiler v1.0",
+        "agent": "PythonToBlocks Compiler v1.0 (Scratch Hacker)",
         "isScratch3Project": true
     }
 }
