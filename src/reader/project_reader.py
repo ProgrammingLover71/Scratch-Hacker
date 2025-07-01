@@ -80,6 +80,7 @@ class ProjectReader:
 						inputs=block_inputs,
 						fields=block_fields,
 						next=block_next,
-						parent=block_parent
+						parent=block_parent,
+						target=target
 					))
 		return block_list

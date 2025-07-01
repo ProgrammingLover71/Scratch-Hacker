@@ -1,4 +1,4 @@
-from reader.util_classes import Variable, Block
+from reader.util_classes import Block
 from typing import Any, List, Tuple
 
 class BlocksToPython:

@@ -1,5 +1,5 @@
 import ast
-from py2b_utils import *
+from .py2b_utils import *
 
 # This class is responsible for converting Python code into a block-based representation.
 # It uses the `ast` module to parse the Python code and generate blocks that represent the
