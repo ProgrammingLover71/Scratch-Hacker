@@ -34,7 +34,7 @@ class PythonToBlocks(ast.NodeVisitor):
             self.visit(statement)
             del self.blocks[-1]
         self.next_id = 0
-        
+
         block_id = self.new_id()
         block = {
             'opcode': 'event_whenflagclicked',
@@ -114,6 +114,7 @@ class PythonToBlocks(ast.NodeVisitor):
             op_block = self.make_binop(ConstantArg(0), value, 'operator_subtract')
             op_block['parent'] = block_id
             self.blocks.append(op_block)
+            value = BlockArg(op_block['P2S_ID'])
         else:
             raise ValueError(f"Unsupported augmented assignment operation: {ast.dump(op)}")
         block = {
