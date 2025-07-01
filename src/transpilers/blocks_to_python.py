@@ -1,4 +1,4 @@
-from util_classes import Variable, Block
+from reader.util_classes import Variable, Block
 from typing import Any, List, Tuple
 
 class BlocksToPython:
@@ -9,7 +9,7 @@ class BlocksToPython:
 	# This method assumes that the blocks are of type Block for simplicity.
 	def get_python_from_blocks(self, blocks: List[Block]) -> str:
 		indent = 0
-		python_code = "from scratch_hacker import *\n\n"
+		python_code = ""
 		self.blocks = blocks   # Store the blocks for potential use as arguments in other blocks
 		for block in blocks:
 			# Convert each block to Python code
@@ -48,7 +48,7 @@ class BlocksToPython:
 					inner_block_code, _ = self.convert_block_to_python(inner_block, indent)
 					if inner_block_code:
 						inner_code += f"{' ' * (indent + 4)}{inner_block_code.strip()}\n"
-				return f"{' ' * indent}@when_flag_clicked\n{' ' * indent}def main():\n{inner_code}", indent
+				return f"{inner_code}", indent
 			
 			###### DATA BLOCKS ######
 			case "data_setvariableto":
@@ -103,7 +103,7 @@ class BlocksToPython:
 			
 			case "motion_turnleft":
 				steps = self.parse_input(block.inputs["DEGREES"])
-				return f"{' ' * indent}turn_degrees(-{steps})", indent
+				return f"{' ' * indent}turn_degrees((0.0 - {steps}))", indent
 			
 			case "motion_direction":
 				return f"{' ' * indent}direction", indent

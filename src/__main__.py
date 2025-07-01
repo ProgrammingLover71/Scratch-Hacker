@@ -1,4 +1,4 @@
-from project_reader import ProjectReader
+from reader.project_reader import ProjectReader
 from transpilers.blocks_to_python import BlocksToPython
 from transpilers.python_to_blocks import PythonToBlocks
 
