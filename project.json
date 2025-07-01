@@ -39,10 +39,55 @@
             "lists": {},
             "broadcasts": {},
             "blocks": {
+                "block_4": {
+                    "opcode": "data_changevariableby",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "block_5"
+                        ]
+                    },
+                    "next": null,
+                    "parent": "block_3",
+                    "fields": {
+                        "VARIABLE": [
+                            "x",
+                            "x"
+                        ]
+                    },
+                    "topLevel": false,
+                    "P2S_ID": "block_4",
+                    "P2S_ISEXPR": false
+                },
+                "block_5": {
+                    "opcode": "operator_add",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                10,
+                                3
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                10,
+                                1
+                            ]
+                        ]
+                    },
+                    "next": null,
+                    "parent": "block_4",
+                    "fields": {},
+                    "topLevel": false,
+                    "P2S_ID": "block_5",
+                    "P2S_ISEXPR": true
+                },
                 "block_1": {
                     "opcode": "event_whenflagclicked",
                     "inputs": {},
-                    "next": null,
+                    "next": "block_2",
                     "parent": null,
                     "fields": {},
                     "topLevel": true,
@@ -63,7 +108,7 @@
                         ]
                     },
                     "next": "block_3",
-                    "parent": null,
+                    "parent": "block_1",
                     "fields": {
                         "VARIABLE": [
                             "x",
@@ -97,31 +142,6 @@
                     "P2S_ID": "block_3",
                     "P2S_ISEXPR": false
                 },
-                "block_5": {
-                    "opcode": "operator_add",
-                    "inputs": {
-                        "NUM1": [
-                            1,
-                            [
-                                10,
-                                3
-                            ]
-                        ],
-                        "NUM2": [
-                            1,
-                            [
-                                10,
-                                1
-                            ]
-                        ]
-                    },
-                    "next": null,
-                    "parent": "block_4",
-                    "fields": {},
-                    "topLevel": false,
-                    "P2S_ID": "block_5",
-                    "P2S_ISEXPR": true
-                },
                 "block_6": {
                     "opcode": "operator_subtract",
                     "inputs": {
@@ -143,26 +163,6 @@
                     "topLevel": false,
                     "P2S_ID": "block_6",
                     "P2S_ISEXPR": true
-                },
-                "block_4": {
-                    "opcode": "data_changevariableby",
-                    "inputs": {
-                        "VALUE": [
-                            3,
-                            "block_6"
-                        ]
-                    },
-                    "next": null,
-                    "parent": "block_3",
-                    "fields": {
-                        "VARIABLE": [
-                            "x",
-                            "x"
-                        ]
-                    },
-                    "topLevel": false,
-                    "P2S_ID": "block_4",
-                    "P2S_ISEXPR": false
                 }
             },
             "comments": {},

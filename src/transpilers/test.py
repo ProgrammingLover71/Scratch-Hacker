@@ -2,11 +2,9 @@ from python_to_blocks import PythonToBlocks, ast
 from project_maker import ProjectMaker
 
 code = """
-@when_flag_clicked
-def main():
-    x = 5
-    x += 2
-    x -= 3 + 1
+x = 5
+x += 2
+x -= 3 + 1
 """
 
 def main():

@@ -31,13 +31,34 @@ class PythonToBlocks(ast.NodeVisitor):
     def visit_Module(self, node):
         [prev_id, prev_block] = ['', {}]
         for statement in node.body:
+            self.visit(statement)
+            del self.blocks[-1]
+        self.next_id = 0
+        
+        block_id = self.new_id()
+        block = {
+            'opcode': 'event_whenflagclicked',
+            'inputs': {},
+            'next': None,
+            'parent': None,
+            'fields': {},
+            'topLevel': True,
+            'x': 100,
+            'y': 100,
+            'P2S_ID': block_id,
+            'P2S_ISEXPR': False
+        }
+        self.blocks.append(block)
+
+        [prev_id, prev_block] = [block_id, block]
+        for statement in node.body:
             [cur_id, cur_block] = self.visit(statement)
             if prev_block:
                 prev_block['next'] = cur_id
                 cur_block['parent'] = prev_id
             prev_id = cur_id
             prev_block = cur_block
-        self.link_expressions()
+        #self.link_expressions()
         return self.blocks
 
 
@@ -70,6 +91,8 @@ class PythonToBlocks(ast.NodeVisitor):
             'P2S_ID': block_id,
             'P2S_ISEXPR': False
         }
+        if block_id == "block_2":
+            block["parent"] = "block_1"
         self.blocks.append(block)
         self.variables[f'var_{target}'] = [target, 0]
         return [block_id, block]
@@ -107,6 +130,8 @@ class PythonToBlocks(ast.NodeVisitor):
             'P2S_ID': block_id,
             'P2S_ISEXPR': False
         }
+        if block_id == "block_2":
+            block["parent"] = "block_1"
         self.blocks.append(block)
         return [block_id, block]
     
@@ -162,35 +187,7 @@ class PythonToBlocks(ast.NodeVisitor):
     # If so, it creates a block for the main function and sets the flag click block ID for later use.
     # If the function is not named 'main', it raises a ValueError.
     def visit_FunctionDef(self, node):
-        name = node.name
-        if name == 'main':
-            block_id = self.new_id()
-            # Special handling for the main function
-            # We need to check if the function is decorated with `when_flag_clicked`
-            if any(decorator.id == 'when_flag_clicked' for decorator in node.decorator_list):
-                block = {
-                    'opcode': 'event_whenflagclicked',
-                    'inputs': {},
-                    'next': None,
-                    'parent': None,
-                    'fields': {},
-                    'topLevel': True,
-                    'x': 100,
-                    'y': 100,
-                    'P2S_ID': block_id,
-                    'P2S_ISEXPR': False
-                }
-                self.blocks.append(block)
-                [prev_id, prev_block] = ['', {}]
-                for statement in node.body:
-                    [cur_id, cur_block] = self.visit(statement)
-                    if prev_block:
-                        prev_block['next'] = cur_id
-                        cur_block['parent'] = prev_id
-                    [prev_id, prev_block] = [cur_id, cur_block]
-                return [block_id, block]
-        else:
-            raise ValueError(f"Non-main functions are not supported: '{name}'")
+        raise ValueError(f"Functions are not supported")
     
 
     # This method is called when a constant value is encountered in the Python code.
