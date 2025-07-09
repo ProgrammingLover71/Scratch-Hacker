@@ -1,7 +1,8 @@
-from sys import argv
+import sys
 
-USE_SHELL = ('-s' in argv)
-
-if USE_SHELL or True:
+if ("-s" in sys.argv) or ("--shell" in sys.argv):
     import main_shell
     main_shell.main()
+else:
+    import main_gui
+    main_gui.main()
