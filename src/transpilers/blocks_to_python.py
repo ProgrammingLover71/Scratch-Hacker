@@ -145,6 +145,7 @@ class BlocksToPython:
 				while inner_block_id != None:
 					loop_block = self.get_block_by_id(inner_block_id)
 					blocks.append(loop_block)
+					print(loop_block)
 					inner_block_id = loop_block.next
 				# Convert the inner blocks to Python code
 				inner_code = ""

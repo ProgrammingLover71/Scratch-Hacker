@@ -81,6 +81,6 @@ class ProjectReader:
 						fields=block_fields,
 						next=block_next,
 						parent=block_parent,
-						target=target
+						target=target.get('name', 'Unnamed Target')
 					))
 		return block_list

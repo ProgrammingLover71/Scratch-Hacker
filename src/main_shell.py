@@ -5,7 +5,7 @@ from transpilers.python_to_blocks import PythonToBlocks
 def main():
     print("Scratch Hacker v1.0-beta-1. (Shell version)\nCopyright (c) 2025 ProgrammingLover71.\n")
     while True:
-        proj = input("SH -- Enter project to read >>")
+        proj = input("SH -- Enter project to read >>   ") + '.sb3'
         try:
             pr = ProjectReader(proj)
             blocks = pr.get_blocks()
